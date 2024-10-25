@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Total Value Calculator</title>
+  <link rel="stylesheet" href="index.css"> <!-- Link to the external CSS file -->
+</head>
+<body>
+
+  <h1>Calculate Total Value of Products</h1>
+  
+  <!-- Product Form -->
+  <form id="productForm">
+    <label>Product Name: <input type="text" name="name" required></label>
+    <label>Price: <input type="number" name="price" required></label>
+    <label>Quantity: <input type="number" name="quantity" required></label>
+    <button type="submit">Add Product</button>
+  </form>
+  
+  <h2>Total Values of Product: <span id="totalValue">0</span></h2>
+
+  <script>
+    const form = document.getElementById('productForm');
+    const totalValueDisplay = document.getElementById('totalValue');
+    
+    const products = [];
+
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const name = form.elements['name'].value;
+      const price = parseFloat(form.elements['price'].value);
+      const quantity = parseInt(form.elements['quantity'].value);
+
+      products.push({ name, price, quantity });
+
+      fetch('/api/calculate-total', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ products })
+      })
+      .then(response => response.json())
+      .then(data => {
+        totalValueDisplay.textContent = data.totalValue;
+      })
+      .catch(error => console.error('Error:', error));
+
+      form.reset();
+    });
+  </script>
+
+</body>
+</html>
